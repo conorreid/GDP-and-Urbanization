@@ -57,8 +57,30 @@ plot(Full.Data$UrbPer, Full.Data$GDPLog)
 #with this, it seems Urban population in general is a much better variable
 #urban population in areas of 1 million or more is irrelevant
 #let's do a Granger causality test
-grangertest(Full.Data$GDPLog ~ Full.Data$UrbPer, order=5)
+grangertest(Full.Data$GDPLog ~ Full.Data$UrbPer, order=20)
 #definitely causal in that direction
 #let's check the opposite direction
-grangertest(Full.Data$UrbPer ~ Full.Data$GDPLog, order=5)
+grangertest(Full.Data$UrbPer ~ Full.Data$GDPLog, order=20)
 #not causal in this direction
+#let's fit the model to our graph
+abline(FEmodel2)
+#as you can see, it seems low
+#let's get rid of outliers (Singapore, Hong Kong) in our data set
+#that might improve our model
+FEmodel2 <- plm(GDPLog ~ UrbPer, data=Full.Data.No.Outliers, index=c("Country", "Year"), mode="within")
+summary(FEmodel2)
+plot(Full.Data.No.Outliers$UrbPer, Full.Data.No.Outliers$GDPLog)
+abline(FEmodel2)
+#Looks like Mongolia, a nomadic country with one city, might also be an outlier
+#we'll take it out and see what happens
+Full.Data.No.Outliers <- read.csv("~/R Stuff/GDP and Cities/Full Data No Outliers.csv")
+plot(Full.Data.No.Outliers$UrbPer, Full.Data.No.Outliers$GDPLog)
+#nope, looks like Monglia was not that outlier
+#instead, it appears Iraq, a country torn by war in the 90's and 2000's, is
+#so, we removed Iraq from the data set
+Full.Data.No.Outliers2 <- read.csv("~/R Stuff/GDP and Cities/Full Data No Outliers.csv")
+plot(Full.Data.No.Outliers2$UrbPer, Full.Data.No.Outliers2$GDPLog)
+FEmodel2 <- plm(GDPLog ~ UrbPer, data=Full.Data.No.Outliers2, index=c("Country", "Year"), mode="within")
+summary(FEmodel2)
+abline(FEmodel2)
+#our R squared has gone up, and Urban Percentage seems to have more effect
