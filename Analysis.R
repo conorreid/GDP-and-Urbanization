@@ -127,3 +127,12 @@ summary(OLSmodel5)
 bptest(OLSmodel5)
 #still heteroskedastic, so still needs to be corrected
 abline(OLSmodel5)
+#hm, the R squared on this is abysmally low
+#maybe it would be better if we look at percentage change of > 1 million?
+#let's try it
+Full.Data.P.C.2 <- read.csv("~/R Stuff/GDP and Cities/Full Data P C 2.csv")
+plot(Full.Data.P.C.2$UrbPer1, Full.Data.P.C.2$GDPLog)
+#model time
+OLSmodel6 <- lm(GDPLog ~ UrbPer1, data=Full.Data.P.C.2)
+summary(OLSmodel6)
+abline(OLSmodel6)
