@@ -87,6 +87,8 @@ abline(FEmodel2)
 #now let's see if change in urban percentage changes GDP growth rate
 #import a new data set of percentage changes
 #I removed the outlier of Cambodia, which was heavily changing the model
+#likewise, also removed Rwanda and Liberia, both outliers
+#all these countries are outliers due to civil war or external war
 Full.Data.Percentage.Change <- read.csv("~/R Stuff/GDP and Cities/Full Data Percentage Change.csv")
 #first let's look at the data again
 plot(Full.Data.Percentage.Change$UrbPer, Full.Data.Percentage.Change$GDP.per.capita)
@@ -124,3 +126,4 @@ summary(OLSmodel5)
 #let's test this model for heteroskedasticity
 bptest(OLSmodel5)
 #still heteroskedastic, so still needs to be corrected
+abline(OLSmodel5)
