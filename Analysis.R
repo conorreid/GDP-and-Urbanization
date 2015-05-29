@@ -57,10 +57,10 @@ plot(Full.Data$UrbPer, Full.Data$GDPLog)
 #with this, it seems Urban population in general is a much better variable
 #urban population in areas of 1 million or more is irrelevant
 #let's do a Granger causality test
-grangertest(Full.Data$GDPLog ~ Full.Data$UrbPer, order=20)
+grangertest(Full.Data$GDPLog ~ Full.Data$UrbPer, order=10)
 #definitely causal in that direction
 #let's check the opposite direction
-grangertest(Full.Data$UrbPer ~ Full.Data$GDPLog, order=20)
+grangertest(Full.Data$UrbPer ~ Full.Data$GDPLog, order=10)
 #not causal in this direction
 #let's fit the model to our graph
 abline(FEmodel2)
@@ -84,3 +84,21 @@ FEmodel2 <- plm(GDPLog ~ UrbPer, data=Full.Data.No.Outliers2, index=c("Country",
 summary(FEmodel2)
 abline(FEmodel2)
 #our R squared has gone up, and Urban Percentage seems to have more effect
+#now let's see if change in urban percentage changes GDP growth rate
+#import a new data set of percentage changes
+#I removed the outlier of Cambodia, which was heavily changing the model
+Full.Data.Percentage.Change <- read.csv("~/R Stuff/GDP and Cities/Full Data Percentage Change.csv")
+#first let's look at the data again
+plot(Full.Data.Percentage.Change$UrbPer, Full.Data.Percentage.Change$GDP.per.capita)
+plot(Full.Data.Percentage.Change$UrbPer, Full.Data.Percentage.Change$LogGDP)
+#now let's make a fixed effect model using the percentage changes
+FEmodel5 <- plm(LogGDP ~ UrbPer, data=Full.Data.Percentage.Change, index=c("Country", "Year"), mode="within")
+summary(FEmodel5)
+#seems that Urban Percentage change does increase GDP growth
+#let's see if the relationship is causal
+grangertest(Full.Data.Percentage.Change$LogGDP ~ Full.Data.Percentage.Change$UrbPer, order=10)
+#it seems to be
+#now let's do it in the opposite direction
+grangertest(Full.Data.Percentage.Change$UrbPer ~ Full.Data.Percentage.Change$LogGDP, order=10)
+#seems to also be causal, but to a lesser degree
+#they both interact with each other, but UrbPer on LogGDP has more effect
