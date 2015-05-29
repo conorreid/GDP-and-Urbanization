@@ -102,3 +102,25 @@ grangertest(Full.Data.Percentage.Change$LogGDP ~ Full.Data.Percentage.Change$Urb
 grangertest(Full.Data.Percentage.Change$UrbPer ~ Full.Data.Percentage.Change$LogGDP, order=10)
 #seems to also be causal, but to a lesser degree
 #they both interact with each other, but UrbPer on LogGDP has more effect
+#let's test for heteroskedasticity
+bptest(FEmodel5)
+#looks like it is, will need correcting
+#now let's test for stationarity
+adf.test(Full.Data.Percentage.Change$LogGDP)
+adf.test(Full.Data.Percentage.Change$UrbPer)
+#both look stationary; cool!
+#however, we never checked if the fixed effect model is appropriate
+#let's do that now by making an OLS model and doing an F test for fixed effects
+OLSmodel5 <- lm(LogGDP ~ UrbPer, data=Full.Data.Percentage.Change)
+summary(OLSmodel5)
+#ok, now let's do the test
+#now let's do an F test for Fixed Effect
+pFtest(FEmodel5, OLSmodel5)
+#looks like, surprisingly, the fixed effects disappear with percentage change
+#therefore, the OLS model is more appropriate
+#let's look at it again
+summary(OLSmodel5)
+#still very significant effects, it seems
+#let's test this model for heteroskedasticity
+bptest(OLSmodel5)
+#still heteroskedastic, so still needs to be corrected
